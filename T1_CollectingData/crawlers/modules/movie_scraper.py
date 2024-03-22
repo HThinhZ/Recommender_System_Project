@@ -3,18 +3,22 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import json
-from settings import *
 
-# Init
+# Initial varibles:
+PATH = "C:/Users/ADMIN/Processing/DSApplication_Project/Processing/T1_CollectingData/"
+
+# Initial Class
 class Movie_Scraper:
     def __init__(self):
         pass
     
     def scrape_movie_ratings(self, container):
         # Inital lists:
+        user_id = []
         user_name = []
         user_rating = []
-        user_id = set()
+        
+        uid_set = set()
         
         # Regex pattern 
         pattern = r'\/user\/(ur\d+)'
@@ -30,9 +34,10 @@ class Movie_Scraper:
                 
             try: 
                 user_id_re = re.findall(pattern, str(name_tag.find('a')['href']))
-                user_id.add(user_id_re[0])
+                user_id.append(user_id_re[0])
+                uid_set.add(user_id_re[0])
             except:
-                user_id.add("")
+                user_id.append("")
             
             try:
                 rating = rating_tag[0].find('span')
@@ -40,31 +45,37 @@ class Movie_Scraper:
             except:
                 user_rating.append("")
         
-        return (user_name, user_rating, list(user_id))
+        return (user_name, user_rating, user_id, list(uid_set))
         
     def scrape_movie(self, movie_id):
-        PATH = "C:/Users/ADMIN/Processing/DSApplication_Project/Processing/T1_CollectingData/"
         # Inital variables:
         data = {}
         data_test = {}
-        user_name = []
-        user_rating = []
-        user_id = []
-        
+        users_id = []
+        users_name = []
+        movies_id = []
+        users_rating = []
+        uids_set = []
+       
         page = requests.get(f"https://www.imdb.com/title/{movie_id}/reviews/?ref_=tt_ql_2")
         soup = BeautifulSoup(page.text, 'html.parser')
         
         container = soup.find_all('div', class_ = "lister-item-content")
         
         movie_ratings = self.scrape_movie_ratings(container)
-        user_name.extend(movie_ratings[0])
-        user_rating.extend(movie_ratings[1])
-        user_id.extend(movie_ratings[2])
+        users_name.extend(movie_ratings[0])
+        users_rating.extend(movie_ratings[1])
+        users_id.extend(movie_ratings[2])
+        uids_set.extend(movie_ratings[3])
+        movies_id.extend([movie_id]*len(movie_ratings[0]))
         
         key_tag = soup.find('div', class_ = "load-more-data")
         next_key = key_tag['data-key']
         
-        while key_tag != None: 
+        npage = 0
+        while key_tag != None:
+            npage = npage + 1
+            print(f"Scraping page {npage} !!!")
             headers = {
                 'authority': 'www.imdb.com',
                 'accept': '*/*',
@@ -92,17 +103,21 @@ class Movie_Scraper:
             container = soup.find_all('div', class_ = "lister-item-content")
             
             movie_ratings = self.scrape_movie_ratings(container)
-            user_name.extend(movie_ratings[0])
-            user_rating.extend(movie_ratings[1])
-            user_id.extend(movie_ratings[2])
+            users_name.extend(movie_ratings[0])
+            users_rating.extend(movie_ratings[1])
+            users_id.extend(movie_ratings[2])
+            uids_set.extend(movie_ratings[3])
+            movies_id.extend([movie_id]*len(movie_ratings[0]))
             
             key_tag = soup.find('div', class_ = "load-more-data")
             next_key = key_tag['data-key'] 
             
-            data['user_name'] = user_name
-            data['user_rating'] = user_rating
+            data['user_id'] = users_id
+            data['user_name'] = users_name
+            data['movie_id'] = movies_id
+            data['user_rating'] = users_rating
             
-            data_test['user_id'] = list(set(user_id))
+            data_test['user_id'] = list(set(uids_set))
             
             file_path_1 = PATH + "data/data.json"
             file_path_2 = PATH + "data/data_test.json"
@@ -112,8 +127,7 @@ class Movie_Scraper:
                 
             with open(file_path_2, 'w') as json_file:
                 json.dump(data_test, json_file)
+            
 
 
-# Main:
-movie_scraper = Movie_Scraper()
-movie_scraper.scrape_movie("tt0111161")
+
