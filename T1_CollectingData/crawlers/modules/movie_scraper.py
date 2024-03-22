@@ -1,7 +1,17 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar 21 14:24:43 2024
+# Import libraries
+import requests
+from bs4 import BeautifulSoup
 
-@author: ADMIN
-"""
+# Init
+class Movie_Scraper:
+    def __init__(self):
+        self.movies_id = []
+        
+    def scrape_movie_ratings(self, movie_id):
+        page = requests.get(f"https://www.imdb.com/title/{movie_id}/reviews/?ref_=tt_ql_2")
+        soup = BeautifulSoup(page.text)
+        
+        
+
+
 
