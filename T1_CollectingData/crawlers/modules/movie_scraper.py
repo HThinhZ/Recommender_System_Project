@@ -5,6 +5,7 @@ import re
 import json
 from time import sleep
 import random
+import os
 
 # Initial varibles:
 PATH = "C:/Users/ADMIN/Processing/DSApplication_Project/Processing/T1_CollectingData/"
@@ -71,7 +72,7 @@ class Movie_Scraper:
         next_key = key_tag['data-key']
         
         npage = 0
-        while npage < 10:
+        while npage < 1:
             npage = npage + 1
             sleep(random.uniform(1,3))
             print(f"Scraping page {npage} !!!")
@@ -115,17 +116,18 @@ class Movie_Scraper:
             data['user_rating'] = users_rating
             
             
-            file_path_data = PATH + "data/data_mur.json"
-            
             for user_id in users_id:
                 if user_id not in puser_id:
                     puser_id[user_id] = False
+        
+        
+        file_path_data = PATH + f"data/data_mur/{movie_id}.json"
             
-            with open(file_path_data, 'w') as json_file:
-                json.dump(data, json_file)
-                
-            with open(file_path, 'w') as json_file:
-                json.dump(puser_id, json_file)
+        with open(file_path_data, 'w') as json_file:
+            json.dump(data, json_file)
+            
+        with open(file_path, 'w') as json_file:
+            json.dump(puser_id, json_file)
             
 
 
