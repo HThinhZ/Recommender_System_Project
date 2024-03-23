@@ -9,4 +9,4 @@ movie_scraper = Movie_Scraper()
 for key, value in pmovie_id.items():
     if value == False:
         movie_scraper.scrape_movie(key)
-        pmovie_id[key] = True
+        # pmovie_id[key] = True
