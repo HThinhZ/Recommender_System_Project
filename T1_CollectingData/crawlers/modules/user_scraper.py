@@ -40,7 +40,30 @@ class User_Scraper:
             
         return (movie_id, user_rating)
     
+    def scrape_user_inf(self, user_id):
+        insert_data = {}
+        url = "https://imdb-api.huyvongmongmanh75.workers.dev/user/" + user_id;
+        response = requests.get(url)
+        data = response.json()
+    
+        insert_data["user_id"] = user_id
+        insert_data["user_name"] = data["name"]
+        insert_data["member_since"] = data["member_since"]
+        
+        return insert_data
+    
     def scrape_user(self, user_id):
+        # Scrape User Information:
+        try:
+            user_infor = self.scrape_user_inf(user_id)
+            user_infor_path = PATH + f"data/users_inf/{user_id}.json"
+            
+            with open(user_infor_path, 'w') as json_file:
+                json.dump(user_infor, json_file)
+        except:
+            pass
+            
+        # Scrape User Ratings:
         # Initial varibles
         data = {}
         users_id = []
@@ -72,7 +95,7 @@ class User_Scraper:
             next_key = key_tag['data-key']
         
             npage = 0
-            while npage < 1:
+            while npage < 5:
                 npage = npage + 1
                 sleep(random.uniform(1,3))
                 print(f"Scraping page {npage} !!!")
