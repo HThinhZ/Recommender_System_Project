@@ -14,8 +14,11 @@ for key, value in pmovie_id.items():
         pmovie_id[key] = True
         index = index + 1
         
-        try:
-            with open(file_path, 'w') as json_file:
-                json.dump(pmovie_id, json_file)
-        except KeyboardInterrupt:
-            print("\nKeyboardInterrupt: File opening process interrupted.")
+        flag = False
+        # Capture signal SIGINT (Ctrl+C)
+        signal.signal(signal.SIGINT, lambda signum, frame: save_and_exit(signum, frame, flag, pmovie_id, file_path))
+        
+        with open(file_path, 'w') as json_file:
+            json.dump(pmovie_id, json_file)
+            flag = True
+       

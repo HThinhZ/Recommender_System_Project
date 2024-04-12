@@ -5,9 +5,22 @@ import re
 import json
 from time import sleep
 import random
+import signal
+import sys
+
 
 # Initial varibles:
 PATH = "C:/Users/ADMIN/Processing/DSA-Project/processing/T1_CollectingData/"
+
+# Functions Signal:
+def save_and_exit(signum, frame, flag, data, filename):
+    if not flag:
+        with open(filename, 'w') as f:
+            json.dump(data, f)
+        print("File saved. Exiting...")
+    else:
+        print("Writing is already complete. Exiting...")
+    sys.exit(0)
 
 # Initial class:
 class User_Scraper:
@@ -45,26 +58,30 @@ class User_Scraper:
         url = "https://imdb-api.huyvongmongmanh75.workers.dev/user/" + user_id;
         response = requests.get(url)
         data = response.json()
-    
+        
         insert_data["user_id"] = user_id
         insert_data["user_name"] = data["name"]
-        insert_data["member_since"] = data["member_since"]
-        
+        try:
+            insert_data["member_since"] = data["member_since"]
+        except:
+            insert_data["member_since"] = ""
+            
         return insert_data
     
     def scrape_user(self, user_id):
         # Scrape User Information:
-        try:
-            user_infor = self.scrape_user_inf(user_id)
-            user_infor_path = PATH + f"data/users_inf/{user_id}.json"
-        except:
-            pass
         
-        try: 
-            with open(user_infor_path, 'w') as json_file:
-                json.dump(user_infor, json_file)
-        except KeyboardInterrupt:
-            print("\nKeyboardInterrupt: File opening process interrupted.")
+        user_infor = self.scrape_user_inf(user_id)
+        user_infor_path = PATH + f"data/users_inf/{user_id}.json"
+        
+        flag = False
+        # Capture signal SIGINT (Ctrl+C)
+        signal.signal(signal.SIGINT, lambda signum, frame: save_and_exit(signum, frame, flag, user_infor, user_infor_path))
+        
+        with open(user_infor_path, 'w') as json_file:
+            json.dump(user_infor, json_file)
+            flag = True
+    
             
         # Scrape User Ratings:
         # Initial varibles
@@ -155,13 +172,21 @@ class User_Scraper:
         
         file_path_data = PATH + f"data/data_umr/{user_id}.json"
         
-        try: 
-            with open(file_path_data, 'w') as json_file:
-                json.dump(data, json_file)
-                
-            with open(file_path, 'w') as json_file:
-                json.dump(pmovie_id, json_file)
-        except KeyboardInterrupt:
-            print("\nKeyboardInterrupt: File opening process interrupted.")
+        flag = False
+        # Capture signal SIGINT (Ctrl+C)
+        signal.signal(signal.SIGINT, lambda signum, frame: save_and_exit(signum, frame, flag, data, file_path_data))
+                      
+        with open(file_path_data, 'w') as json_file:
+            json.dump(data, json_file)
+            flag = True
+        
+        flag = False
+        # Capture signal SIGINT (Ctrl+C)
+        signal.signal(signal.SIGINT, lambda signum, frame: save_and_exit(signum, frame, flag, pmovie_id, file_path))
+        
+        with open(file_path, 'w') as json_file:
+            json.dump(pmovie_id, json_file)
+            flag = True
+
             
             
