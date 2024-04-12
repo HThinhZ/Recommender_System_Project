@@ -6,9 +6,21 @@ import json
 from time import sleep
 import random
 import os
+import signal
+import sys
 
 # Initial varibles:
 PATH = "C:/Users/ADMIN/Processing/DSA-Project/processing/T1_CollectingData/"
+
+# Functions Signal:
+def save_and_exit(signum, frame, flag, data, filename):
+    if not flag:
+        with open(filename, 'w') as f:
+            json.dump(data, f)
+        print("File saved. Exiting...")
+    else:
+        print("Writing is already complete. Exiting...")
+    sys.exit(0)
 
 # Initial Class
 class Movie_Scraper:
@@ -71,11 +83,13 @@ class Movie_Scraper:
         except:
             pass
         
-        try:
-            with open(movie_infor_path, 'w') as json_file:
-                json.dump(movie_infor, json_file)
-        except KeyboardInterrupt:
-            print("\nKeyboardInterrupt: File opening process interrupted.")
+        flag = False
+        # Capture signal SIGINT (Ctrl+C)
+        signal.signal(signal.SIGINT, lambda signum, frame: save_and_exit(signum, frame, flag, movie_infor, movie_infor_path))
+        
+        with open(movie_infor_path, 'w') as json_file:
+            json.dump(movie_infor, json_file)
+            flag = True
             
         # Scrape Movie Ratings:
         # Inital variables:
@@ -164,14 +178,21 @@ class Movie_Scraper:
         
         file_path_data = PATH + f"data/data_mur/{movie_id}.json"
         
-        try: 
-            with open(file_path_data, 'w') as json_file:
-                json.dump(data, json_file)
-                
-            with open(file_path, 'w') as json_file:
-                json.dump(puser_id, json_file)
-        except KeyboardInterrupt:
-            print("\nKeyboardInterrupt: File opening process interrupted.")
+        flag = False
+        # Capture signal SIGINT (Ctrl+C)
+        signal.signal(signal.SIGINT, lambda signum, frame: save_and_exit(signum, frame, flag, data, file_path_data))
+        
+        with open(file_path_data, 'w') as json_file:
+            json.dump(data, json_file)
+            flag = True
+        
+        flag = False
+        # Capture signal SIGINT (Ctrl+C)
+        signal.signal(signal.SIGINT, lambda signum, frame: save_and_exit(signum, frame, flag, puser_id, file_path))
+        with open(file_path, 'w') as json_file:
+            json.dump(puser_id, json_file)
+            flag = True
+
             
 
 
