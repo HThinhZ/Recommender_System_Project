@@ -1,0 +1,57 @@
+# Import libraries
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+import numpy as np
+import pandas as pd
+import sys
+import os
+
+# Add path
+def setup():
+    sys.path.append(os.path.join(os.path.dirname(__file__), "modules"))
+    # print(sys.path)
+
+# Class
+class Collector:
+    def __init__(self, client, db):
+        self.client = client
+        self.db = db
+        self.fmi_collection = self.db['Full_Movies_Infor']
+        self.mi_collection = self.db['Movies_Infor']
+        self.ui_collection = self.db['Users_Infor']
+        self.r_collection = self.db['Ratings']
+
+    def run(self): 
+        # Full Movies Infor
+        fmi_cursor = self.fmi_collection.find()
+        fmi_data = list(fmi_cursor)
+        fmi_df = pd.DataFrame(fmi_data, index = None)
+        fmi_df = fmi_df.drop('_id', axis=1, errors='ignore')
+        fmi_df = fmi_df.drop_duplicates().reset_index()
+
+        # Movies Infor
+        mi_cursor = self.mi_collection.find()
+        mi_data = list(mi_cursor)
+        mi_df = pd.DataFrame(mi_data, index = None)
+        mi_df = mi_df.drop('_id', axis=1, errors='ignore')
+        mi_df = mi_df.drop_duplicates().reset_index()
+
+        # Users Infor
+        ui_cursor = self.ui_collection.find()
+        ui_data = list(ui_cursor)
+        ui_df = pd.DataFrame(ui_data, index = None)
+        ui_df = ui_df.drop('_id', axis=1, errors='ignore')
+        ui_df = ui_df.drop_duplicates().reset_index()
+
+        # Ratings
+        r_cursor = self.r_collection.find()
+        r_data = list(r_cursor)
+        r_df = pd.DataFrame(r_data, index = None)
+        r_df = r_df.drop('_id', axis=1, errors='ignore')
+        r_df = r_df.drop_duplicates().reset_index()
+
+        return fmi_df, mi_df, ui_df, r_df
+
+# Test:
+def app():
+    print("Test")
