@@ -10,6 +10,7 @@ import os
 
 # Add path
 def setup():
+    # sys.path.append(os.path.join(os.path.dirname(__file__)))
     sys.path.append(os.path.join(os.path.dirname(__file__), "modules"))
     # print(sys.path)
 
@@ -61,5 +62,4 @@ class Collector:
         return fmi_df, mi_df, ui_df, r_df
 
 # Test:
-def app():
-    print("Test")
+setup()

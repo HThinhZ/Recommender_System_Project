@@ -16,7 +16,6 @@ from modules.softmax_dnn import App as SoftmaxDNN_App
 
 # Main
 if __name__ == '__main__':  
-
     if 'update_data' not in st.session_state:
         st.session_state['update_data'] = False
 
