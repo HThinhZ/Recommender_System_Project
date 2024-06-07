@@ -1,4 +1,6 @@
 # Import libraries
+import streamlit as st
+import bcrypt
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import numpy as np
@@ -10,6 +12,12 @@ import os
 def setup():
     sys.path.append(os.path.join(os.path.dirname(__file__), "modules"))
     # print(sys.path)
+
+# Init list users:
+def initusers(userids):
+    # Khởi tạo danh sách người dùng
+    if 'users' not in st.session_state:
+        st.session_state['users'] = userids
 
 # Class
 class Collector:
