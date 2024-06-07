@@ -24,6 +24,7 @@ class Collector:
     def run(self): 
         # Full Movies Infor
         fmi_cursor = self.fmi_collection.find()
+        # print(fmi_cursor)
         fmi_data = list(fmi_cursor)
         fmi_df = pd.DataFrame(fmi_data, index = None)
         fmi_df = fmi_df.drop('_id', axis=1, errors='ignore')

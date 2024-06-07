@@ -15,7 +15,7 @@ from modules.advancedsearch import App as AS_App
 if __name__ == '__main__':
     setup()
     ## Connect to MongoDB:
-    client =  MongoClient(MONGODB_HOST)
+    client =  MongoClient(uri, server_api=ServerApi('1'))
     db = client['T2_PreprocessedData']
     collector = Collector(client, db)
     fmi_df, mi_df, ui_df, r_df = collector.run()
