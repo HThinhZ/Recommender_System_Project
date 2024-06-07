@@ -2,6 +2,7 @@
 import init
 import plotly.graph_objects as go
 import streamlit as st
+from tool import *
 
 # Class
 class App: 
@@ -58,7 +59,7 @@ class App:
         return as_df[:10]
     
     def run(self):
-        st.title("Advanced search")
+        st.title("Tìm kiếm nâng cao")
         col1, col2, col3 = st.columns(3)
         title = col1.text_input("Nhập title:")
         actors = col2.text_input("Nhập actors:")
@@ -70,7 +71,6 @@ class App:
             'Game-Show', 'News', 'Talk-Show']
         genre = st.multiselect("Chọn thể loại yêu thích:", genres)
 
-        st.write("Kết quả:")
         options = {
             'title': title,
             'genre': genre,
@@ -80,22 +80,31 @@ class App:
             'releaseDate': '06-2010',
             'ratingStar': 8
         }
-        as_df = self.rs_asearch(self.fmi_df, options)
-        st.write(as_df)
-        asi_df = as_df[['title', 'ratingStar']]
-        st.write("Biểu đồ:")
+        as_df = self.rs_asearch(self.fmi_df, options).reset_index()
 
-        # Tạo biểu đồ cột sử dụng Plotly
-        fig = go.Figure(data=[go.Bar(y=as_df['title'], x=as_df['ratingStar'], orientation='h', marker_color='gold')])
+        option = st.selectbox(
+        'Chọn nội dung muốn hiển thị:',
+        ('Kết quả', 'Thông tin', 'Trực quan hóa')
+        )
+        
+        if option == 'Kết quả':
+            st.write(display_columns(as_df, 3))
+        elif option == 'Thông tin':
+            st.write(as_df)
+        elif option == 'Trực quan hóa':
+            # Tạo biểu đồ cột sử dụng Plotly
+            fig = go.Figure(data=[go.Bar(y=as_df['title'], x=as_df['ratingStar'], orientation='h', marker_color='gold')])
 
-        # Tùy chỉnh layout của biểu đồ
-        fig.update_layout(title='Biểu đồ thể hiện Rating',
-                            xaxis_title='ratingStar',
-                            yaxis_title='title')
+            # Tùy chỉnh layout của biểu đồ
+            fig.update_layout(title='Biểu đồ thể hiện Rating',
+                                xaxis_title='ratingStar',
+                                yaxis_title='title')
 
-        # Hiển thị biểu đồ trên Streamlit
-        st.plotly_chart(fig)
+            # Hiển thị biểu đồ trên Streamlit
+            st.plotly_chart(fig)
 
+
+        
 
     
 
