@@ -13,6 +13,7 @@ from modules.login import App as Login_App
 from modules.signup import App as SignUp_App
 from modules.advancedsearch import App as AS_App
 from modules.softmax_dnn import App as SoftmaxDNN_App
+from modules.svd import App as SVD_App
 
 # Main
 if __name__ == '__main__':  
@@ -47,7 +48,7 @@ if __name__ == '__main__':
     if st.session_state['logged_in']:
         st.sidebar.success(f"Logged in as {st.session_state['username']}")
         with st.sidebar:
-            page = option_menu("Main Menu", ['Trang chủ', '??', "Tìm kiếm nâng cao",'Có thể bạn sẽ thích (1)', "Đăng xuất"], 
+            page = option_menu("Main Menu", ['Trang chủ', '??', "Tìm kiếm nâng cao",'Có thể bạn sẽ thích (1)', 'Có thể bạn sẽ thích (2)', "Đăng xuất"], 
                 icons=['house', 'gear'], menu_icon="cast", default_index=1)
             
         # page = option_menu("Menu", ["???", "???", "???", '???'], 
@@ -65,6 +66,10 @@ if __name__ == '__main__':
         elif page == "Có thể bạn sẽ thích (1)":
             softmaxdnn_app = SoftmaxDNN_App(st.session_state['r_df'], st.session_state['fmi_df'], st.session_state['userid'])
             softmaxdnn_app.run()
+        elif page == "Có thể bạn sẽ thích (2)":
+            svd_app = SVD_App(st.session_state['r_df'], st.session_state['fmi_df'], st.session_state['userid'])
+            svd_app.run()
+            
         elif page == "Đăng xuất":
             st.session_state['logged_in'] = False
             st.session_state['username'] = ""
