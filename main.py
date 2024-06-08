@@ -56,7 +56,8 @@ if __name__ == '__main__':
 
         ## Function
         if page == "Trang chủ":
-            home_app = Home_App()
+            home_app = Home_App(st.session_state['fmi_df'], st.session_state['mi_df'],\
+                                st.session_state['ui_df'], st.session_state['userid'])
             home_app.run()
         elif page == "Tìm kiếm nâng cao":
             as_app = AS_App(st.session_state['fmi_df'])

@@ -43,14 +43,13 @@ class App:
         recommended_movies = self.item_enc.inverse_transform(sorted_indices)
         spredicted_rating = predicted_rating[sorted_indices]
         spredicted_rating_probality = predicted_rating_probality[sorted_indices]
-        print("---------------------------------------------------------------------------------")
-        print("Top "+str(n_movies)+" Movie recommendations for the User "+str(user_id)+ " are:")
         recommend_nmovies = pd.DataFrame({"title": list(recommended_movies[:n_movies]),
                                             "predicted rating": list(spredicted_rating[:n_movies]),
                                             "probality": spredicted_rating_probality[:n_movies]})
         return recommend_nmovies
 
     def run(self):
+        st.title("Có thể bạn sẽ thích (1)")
         loaded_model = tf.keras.models.load_model('models/softmax_dnn.h5')
         nmovies = st.number_input("Nhập số lượng phim muốn xem:", min_value=0, max_value=100, value=10, step=1, format="%d")
         
