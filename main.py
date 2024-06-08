@@ -16,7 +16,6 @@ from modules.softmax_dnn import App as SoftmaxDNN_App
 
 # Main
 if __name__ == '__main__':  
-
     if 'update_data' not in st.session_state:
         st.session_state['update_data'] = False
 
@@ -24,7 +23,7 @@ if __name__ == '__main__':
     if (st.session_state['update_data'] == False):
         setup()
         ## Connect to MongoDB:
-        client =  MongoClient(MONGODB_HOST)
+        client =  MongoClient(uri, server_api=ServerApi('1'))
         db = client['T2_PreprocessedData']
         collector = Collector(client, db)
         fmi_df, mi_df, ui_df, r_df = collector.run()
