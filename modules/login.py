@@ -24,6 +24,8 @@ class App():
                     st.session_state['userid'] = self.userid
                 except:
                     username = self.userid
+                    st.session_state['userid'] = self.userid
+                    
                 st.session_state['username'] = username
                 
                 st.success(f"Logged In as {self.userid}")
