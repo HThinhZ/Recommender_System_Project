@@ -7,6 +7,13 @@ import numpy as np
 import pandas as pd
 import sys
 import os
+import ast
+from datetime import datetime
+
+
+
+def string_to_list(string):
+    return ast.literal_eval(string)
 
 # Add path
 def setup():
@@ -38,6 +45,13 @@ class Collector:
         fmi_df = pd.DataFrame(fmi_data, index = None)
         fmi_df = fmi_df.drop('_id', axis=1, errors='ignore')
         fmi_df = fmi_df.drop_duplicates().reset_index()
+        fmi_df["genre"] = fmi_df["genre"].apply(string_to_list)
+        fmi_df["directors"] = fmi_df["directors"].apply(string_to_list)
+        fmi_df["actors"] = fmi_df["actors"].apply(string_to_list)
+
+        current_date = datetime.now().date()
+        current_date = pd.to_datetime(current_date)
+        fmi_df["deltaDate"] = current_date - fmi_df["releaseDate"]
 
         # Movies Infor
         mi_cursor = self.mi_collection.find()

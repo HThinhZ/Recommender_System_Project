@@ -13,6 +13,8 @@ from modules.login import App as Login_App
 from modules.signup import App as SignUp_App
 from modules.advancedsearch import App as AS_App
 from modules.softmax_dnn import App as SoftmaxDNN_App
+from modules.survey import App as Survey_App
+
 
 # Main
 if __name__ == '__main__':  
@@ -47,7 +49,7 @@ if __name__ == '__main__':
     if st.session_state['logged_in']:
         st.sidebar.success(f"Logged in as {st.session_state['username']}")
         with st.sidebar:
-            page = option_menu("Main Menu", ['Trang chủ', '??', "Tìm kiếm nâng cao",'Có thể bạn sẽ thích (1)', "Đăng xuất"], 
+            page = option_menu("Main Menu", ['Trang chủ', 'Khảo sát', "Tìm kiếm nâng cao",'Có thể bạn sẽ thích (1)', "Đăng xuất"], 
                 icons=['house', 'gear'], menu_icon="cast", default_index=1)
             
         # page = option_menu("Menu", ["???", "???", "???", '???'], 
@@ -58,6 +60,9 @@ if __name__ == '__main__':
         if page == "Trang chủ":
             home_app = Home_App()
             home_app.run()
+        elif page == "Khảo sát":
+            survey_app = Survey_App()
+            survey_app.run()
         elif page == "Tìm kiếm nâng cao":
             as_app = AS_App(st.session_state['fmi_df'])
             as_app.run()

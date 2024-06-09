@@ -1,5 +1,6 @@
 import streamlit as st
 import base64
+import requests
 
 # Hàm để đọc file hình ảnh và chuyển đổi sang base64
 def get_image_base64(image_path):
@@ -12,20 +13,31 @@ def display_columns(items, cols=3):
         cols_list = st.columns(cols)
         for j, col in enumerate(cols_list):
             if i + j < len(items):
+                local_image_path = "images\\image1.jpg"
+
+                try: 
+                    url = "https://imdb-api.huyvongmongmanh75.workers.dev/title/" + items['movie_id'][i+j]
+                    response = requests.get(url)
+                    data = response.json()
+                except:
+                    data = {"image":local_image_path}
                 # Đường dẫn tới hình ảnh cục bộ
-                local_image_path = "images\image1.jpg"
+                image_url = data.get("image", local_image_path)
+
 
                 # URL đích khi nhấp vào hình ảnh
                 link_url = "https://www.facebook.com/"
 
                 # Chuyển đổi hình ảnh sang base64
-                local_image_base64 = get_image_base64(local_image_path)
+                # local_image_base64 = get_image_base64(local_image_path)
 
                 # Sử dụng HTML để chèn hình ảnh, thêm caption và liên kết
                 image_html = f'''
-                    <a href="{link_url}" target="_blank">
-                        <img src="data:image/jpeg;base64,{local_image_base64}" width="100%">
-                        <div style="text-align:center;">{items['title'][i+j]}</div>
+                    <a href="{link_url}" target="_blank" style="text-decoration: none;">
+                        <div style="width: 150px; height: 225px; overflow: hidden; margin: 0 auto;">
+                            <img src="{image_url}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="text-align:center; ">{items['title'][i + j]}</div>
                     </a>
                 '''
                 with col:
