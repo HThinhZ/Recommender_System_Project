@@ -2,9 +2,21 @@ import streamlit as st
 from datetime import timedelta
 import pandas as pd
 from tool import *
+import google.generativeai as genai
+import re
+
+def convert_to_list(text):
+    ma = re.findall("'title':\s?'(.+)',\s?'releaseDate':\s?(\d+)", text)
+    ls_movie= []
+    ls_year = []
+    for i in ma:
+        ls_movie.append(i[0])
+        ls_year.append(int(i[1]))
+    return ls_movie, ls_year
+
 
 def check_in_list(x, val_to_check):
-  return any(value in x for value in val_to_check)
+    return any(value in x for value in val_to_check)
 
 def suggest_for_newuser(mi_df, type_filter, filter, discover):
     ls_movie = ()
@@ -80,6 +92,15 @@ class App():
             all_movies_set.update(preference_list)
             return True
     
+    def display_movies_df(self, fmi_df, preference_list, input,header, all_movies_set):
+        if input:
+            st.header(header)
+            st.write(get_inf(fmi_df, preference_list))
+            return False
+        else:
+            all_movies_set.update(preference_list)
+            return True
+    
     def run(self):
         fmi_df = st.session_state['fmi_df']
         
@@ -106,8 +127,45 @@ class App():
 
                 if have_empty:
                     ls_movie = list(set_movie)
-                    st.header("Các bộ phim có thể bạn thích:")
+                    st.header("Các bộ phim khác có thể bạn thích:")
                     st.write(display_columns(get_inf(fmi_df, ls_movie), 3))
 
             else:
-                st.write("hi")
+                have_empty |= self.display_movies_df(fmi_df, lis_genre, self.ls_genre,"Các bộ phim thuộc thể loại bạn thích:", set_movie)
+                have_empty |= self.display_movies_df(fmi_df, lis_actor, self.ls_actor,"Các bộ phim của diễn viên bạn thích:", set_movie)
+                have_empty |= self.display_movies_df(fmi_df, lis_director, self.ls_director,"Các bộ phim của đạo diễn bạn thích:", set_movie)
+                have_empty |= self.display_movies_df(fmi_df, lis_location, self.ls_country,"Các bộ phim của quốc gia bạn thích:", set_movie)
+
+                if have_empty:
+                    ls_movie = list(set_movie)
+                    st.header("Các bộ phim khác có thể bạn thích:")
+                    st.write(get_inf(fmi_df, ls_movie), 3)
+        else:
+            genai.configure(api_key="AIzaSyBy7nDrmRYcfpdmUb9zewqJxGmwVq-diRw")
+            model = genai.GenerativeModel('gemini-1.5-flash-latest')
+
+            messages = [
+                {'role':'user',
+                'parts': ["""Bạn sẽ đóng vai trò là một hệ thống đề xuất phim cho người dùng mới.
+                Khi người dùng mới nhập vào một trải nghiệm xem phim của họ hay sở thích, bạn sẽ thực hiện đề xuất các bộ phim phù hợp với nội dung đó.
+                Số lượng phim tối thiểu cần đề xuất là 20 phim.
+                Kết quả đưa ra một list các dictionary có dạng [{'title': tên phim, 'releaseDate': ngày phát hành}] và không phải giải thích gì thêm.
+                Ví dụ: [{'title':'Insidious', 'releaseDate':2024}, {'title':'Evil Dead Rise', 'releaseDate': 2023}]"""]}
+            ]
+            response = model.generate_content(messages)
+            messages.append({'role':'model',
+                 'parts':[response.text]})
+
+            messages.append({'role':'user',
+                            'parts':[self.text]})
+
+            response = model.generate_content(messages)
+
+            ls_movie, ls_year = convert_to_list(response.text)
+            recom_df = pd.DataFrame({"title": ls_movie, "year": ls_year})
+            # for movie in ls_recommend:
+            recom_df = recom_df.merge(fmi_df, how="inner", on="title")
+            recom_df["deltaYear"] = abs(recom_df["releaseDate"].dt.year - recom_df["year"])
+            min_idx = recom_df.groupby("title")["deltaYear"].idxmin()
+            recom_df = recom_df.loc[min_idx]
+            display_columns(get_inf(fmi_df, recom_df), 3)

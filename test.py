@@ -1,20 +1,17 @@
 import streamlit as st
+import time
+placeholder = st.empty()
 
-# Kiểm tra xem session state 'page' đã tồn tại chưa, nếu chưa thì thiết lập nó.
-if 'page' not in st.session_state:
-    st.session_state.page = 'home'
+# Replace the placeholder with some text:
+placeholder.text("Hello")
+time.sleep(5)
+# Replace the text with a chart:
+placeholder.line_chart({"data": [1, 5, 2, 6]})
 
-def navigate_to(page):
-    st.session_state.page = page
+# Replace the chart with several elements:
+with placeholder.container():
+    st.write("This is one element")
+    st.write("This is another")
 
-# Giao diện cho trang chủ
-if st.session_state.page == 'home':
-    st.title('Trang chủ')
-    if st.button('Gửi'):
-        navigate_to('second_page')
-
-# Giao diện cho trang thứ hai
-elif st.session_state.page == 'second_page':
-    st.title('Trang thứ hai')
-    if st.button('Trở về'):
-        navigate_to('home')
+# Clear all those elements:
+placeholder.empty()

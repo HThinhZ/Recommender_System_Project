@@ -4,8 +4,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
-from surprise import Dataset
-from surprise import Reader
+# from surprise import Dataset
+# from surprise import Reader
 
 # Class
 class App: 
