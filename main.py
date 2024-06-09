@@ -14,6 +14,7 @@ from modules.signup import App as SignUp_App
 from modules.advancedsearch import App as AS_App
 from modules.softmax_dnn import App as SoftmaxDNN_App
 from modules.svd import App as SVD_App
+from modules.content_base_filtering import App as CBF_App
 
 # Main
 if __name__ == '__main__':  
@@ -48,8 +49,8 @@ if __name__ == '__main__':
     if st.session_state['logged_in']:
         st.sidebar.success(f"Logged in as {st.session_state['username']}")
         with st.sidebar:
-            page = option_menu("Main Menu", ['Trang chủ', '??', "Tìm kiếm nâng cao",'Có thể bạn sẽ thích (1)', 'Có thể bạn sẽ thích (2)', "Đăng xuất"], 
-                icons=['house', 'gear'], menu_icon="cast", default_index=1)
+            page = option_menu("Main Menu", ['Trang chủ', 'Đề xuất cho New User',"Nội dung tương tự" ,"Tìm kiếm nâng cao",'Có thể bạn sẽ thích (1)', 'Có thể bạn sẽ thích (2)', "Đăng xuất"], 
+                icons=['house', 'person-fill-add', 'stickies', 'search', 'star', 'star-fill'], menu_icon="cast", default_index=1)
             
         # page = option_menu("Menu", ["???", "???", "???", '???'], 
         #     icons=['house', 'cloud-upload', "list-task", 'gear'], 
@@ -60,6 +61,9 @@ if __name__ == '__main__':
             home_app = Home_App(st.session_state['fmi_df'], st.session_state['mi_df'],\
                                 st.session_state['ui_df'], st.session_state['userid'])
             home_app.run()
+        elif page == "Nội dung tương tự":
+            cbf_app = CBF_App(st.session_state['mi_df'])
+            cbf_app.run()
         elif page == "Tìm kiếm nâng cao":
             as_app = AS_App(st.session_state['fmi_df'])
             as_app.run()

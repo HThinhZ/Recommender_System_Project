@@ -12,8 +12,9 @@ def display_columns(items, cols=3):
         cols_list = st.columns(cols)
         for j, col in enumerate(cols_list):
             if i + j < len(items):
+                idx = (i+j) % 10 + 1
                 # Đường dẫn tới hình ảnh cục bộ
-                local_image_path = "images\image1.jpg"
+                local_image_path = f"images\image{idx}.jpg"
 
                 # URL đích khi nhấp vào hình ảnh
                 link_url = "https://www.facebook.com/"
@@ -23,9 +24,13 @@ def display_columns(items, cols=3):
 
                 # Sử dụng HTML để chèn hình ảnh, thêm caption và liên kết
                 image_html = f'''
-                    <a href="{link_url}" target="_blank">
-                        <img src="data:image/jpeg;base64,{local_image_base64}" width="100%">
-                        <div style="text-align:center;">{items['title'][i+j]}</div>
+                    <a href="{link_url}" target="_blank" style="text-decoration:none;">
+                        <div style="text-align:center; width:100%;">
+                            <div style="display:inline-block; width:100%; height:auto;">
+                                <img src="data:image/jpeg;base64,{local_image_base64}" style="width:100%; height:300px; object-fit:cover;">
+                            </div>
+                            <div style="margin-top: 10px;">{items['title'][i + j]}</div>
+                        </div>
                     </a>
                 '''
                 with col:
