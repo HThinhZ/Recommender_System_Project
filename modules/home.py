@@ -25,7 +25,8 @@ class App:
                     (Thể loại, quốc gia, đạo diễn, ...)")
             st.write("+ **Đề xuất cho user mới**: Ở đây bạn sẽ thực hiện các khảo sát để chúng tôi hiểu hơn về bạn cũng như đưa ra \
                      những bộ phim đúng với sở thích của bạn")
-            st.write("+ **Nội dung phim tương tự**:")
+            st.write("+ **Nội dung phim tương tự**: Ở đây bạn sẽ tìm được những bộ phim có nội dung tương tự với bộ phim mà bạn ấn \
+                     tượng bằng cách nhập Movie Id hay đơn giản là chỉ cần nhớ 1 phần nhỏ title của phim đó")
             st.info("Đặc biệt:")
             st.write("+ **Có thể bạn sẽ thích (1)**: Ở đây bạn sẽ được giới thiệu những bộ phim mà những người có cùng sở thích với bạn \
                      đánh giá cao")
